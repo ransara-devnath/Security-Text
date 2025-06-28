@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Text Converter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+      --bg-color: #121212;
+      --card-color: #1e1e1e;
+      --text-color: #ffffff;
+      --accent-color: #00c9a7;
+      --accent-hover: #00a388;
+}
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      text-align: center;
+}
+
+    h1 {
+      margin-bottom: 0.5rem;
+}
+
+.welcome-text {
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+      animation: glowLoop 4s ease-in-out infinite;
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+}
+
+    @keyframes glowLoop {
+      0%, 100% {
+        text-shadow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+}
+      50% {
+        text-shadow: 0 0 10px #00fff0, 0 0 20px #00fff0, 0 0 30px #00fff0;
+}
+}
+
+    textarea, input,.fancy-text {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--card-color);
+      color: var(--text-color);
+      resize: none;
+      margin-top: 10px;
+}
+
+    button {
+      margin: 1rem 0.4rem;
+      padding: 10px 18px;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+}
+
+    button:hover {
+      background-color: var(--accent-hover);
+}
+
+    #output {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: var(--card-color);
+      border-radius: 5px;
+      word-break: break-word;
+}
+
+    #loader {
+      display: none;
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: var(--accent-color);
+      animation: pulse 1.5s infinite;
+}
+
+    @keyframes pulse {
+      0% { opacity: 0.2;}
+      50% { opacity: 1;}
+      100% { opacity: 0.2;}
+}
+
+    #charCount {
+      margin-top: 0.4rem;
+      color: #bbb;
+      font-size: 0.9rem;
+}
+
+.fancy-text:hover {
+      background-color: var(--accent-hover);
+      color: white;
+}
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #888;
+}
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+}
+
+      button {
+        width: 100%;
+        margin: 0.5rem 0;
+}
+
+.fancy-text {
+        font-size: 1rem;
+}
+}
+  </style>
+</head>
+<body>
+  <h1>🔐 Secure Text Converter</h1>
+  <h2 class="welcome-text">👋 Welcome to Secure Text Converter</h2>
+
+  <textarea id="textInput" placeholder="Type or paste your message..."></textarea>
+  <div id="charCount">Characters: 0</div>
+
+  <br />
+  <button onclick="encryptText()">Encrypt</button>
+  <button onclick="decryptText()">Decrypt</button>
+  <button onclick="copyText()">Copy</button>
+  <button onclick="clearFields()">Clear</button>
+
+  <div id="loader">🔄 Processing...</div>
+  <div id="output"></div>
+
+  <hr style="margin: 2rem 0;" />
+
+  <h2>✒️ Unicode Font Changer</h2>
+  <input type="text" id="unicodeInput" placeholder="Enter your text..." />
+  <div id="fontResults"></div>
+
+  <footer>
+    Developed by <strong>Ransara Devnath</strong> © 2025
+  </footer>
+
+  <script>
+    const input = document.getElementById('textInput');
+    const charCount = document.getElementById('charCount');
+   input.addEventListener('input', () => {
+      charCount.innerText = 'Characters: ' + input.value.length;
+});
+
+    document.getElementById("output").onclick = function () {
+      const range = document.createRange();
+      range.selectNode(this);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+};
+
+    function encryptText() {
+      const text = input.value;
+      showLoader();
+      setTimeout(() => {
+        const encrypted = btoa(text);
+        document.getElementById('output').innerText = "🔒 Encrypted: " + encrypted;
+        hideLoader();
+}, 1000);
+}
+
+    function decryptText() {
+      const encrypted = input.value;
+      showLoader();
+      setTimeout(() => {
+        try {
+          const decrypted = atob(encrypted);
+          document.getElementById('output').innerText = "🔓 Decrypted: " + decrypted;
+} catch (e) {
+          document.getElementById('output').innerText = "⚠️ Invalid Base64 string!";
+}
+        hideLoader();
+}, 1000);
+}
+
+    function copyText() {
+      const output = document.getElementById('output').innerText;
+      if (!output) {
+        alert("There's no text to copy!");
+        return;
+}
+      const temp = document.createElement("textarea");
+      temp.value = output;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+      alert("✅ Text copied to clipboard!");
+}
+
+    function clearFields() {
+      input.value = '';
+      document.getElementById('output').innerText = '';
+      charCount.innerText = 'Characters: 0';
+      hideLoader();
+}
+
+    function showLoader() {
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('output').innerText = '';
+}
+
+    function hideLoader() {
+      document.getElementById('loader').style.display = 'none';
+}
+
+    // Unicode Font Changer
+    document.getElementById('unicodeInput').addEventListener('input', function () {
+      const text = this.value;
+      const results = document.getElementById('fontResults');
+      results.innerHTML = '';
+
+      const styles = [
+        t => [...t].map(c => c.match(/[A-Za-z]/)? String.fromCharCode(0x1D400 + c.toUpperCase().charCodeAt(0) - 65): c).join(''),
+        t => [...t].map(c => c.match(/[a-z]/)? String.fromCharCode(0x1D41A + c.charCodeAt(0) - 97): c).join(''),
+        t => t.toUpperCase().split('').map(l => l.match(/[A-Z]/)? String.fromCharCode(0x24B6 + (l.charCodeAt(0) - 65)): l).join(''),
+        t => t.split('').reverse().join('')
+      ];
+
+      styles.forEach(format => {
+        try {
+          const fancy = format(text);
+          const div = document.createElement('div');
+          div.className = 'fancy-text';
+          div.innerText = fancy;
+          div.onclick = () => {
+            navigator.clipboard.writeText(fancy);
+            alert("📋 Copied to clipboard!");
+};
+          results.appendChild(div);
+} catch {}
+});
+});
+  </script>
+</body>
+</html>
