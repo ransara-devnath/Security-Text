@@ -4,99 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Security Text by Ransara Devnath</title>
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Pacifico&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-
-  <style>
-    html {
-      background: #0a001a;
-      color-scheme: dark;
-      scroll-behavior: smooth;
-}
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #2e005e, #001f3f);
-      color: #fff;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      opacity: 0;
-      transition: opacity 0.6s ease-in-out;
-}
-
-    body.loaded {
-      opacity: 1;
-}
-
-.container {
-      padding: 20px;
-      width: 95%;
-      max-width: 600px;
-      margin: auto;
-}
-
-    h1, h2 {
-      margin-top: 30px;
-}
-
-    textarea, select {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-}
-
-.outputBox {
-      background: rgba(255,255,255,0.05);
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 18px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-}
-
-    button {
-      background-color: #229ED9;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 25px;
-      font-size: 16px;
-      margin: 8px 4px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-    button:hover {
-      background-color: #1b8dc3;
-      transform: scale(1.05);
-}
-
-.footer {
-      margin: 40px 0 20px;
-      font-size: 14px;
-      opacity: 0.6;
-}
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>🔐 Security Text</h1>
 
-    <!-- Encrypt/Decrypt Section -->
+    <!-- Encrypt / Decrypt -->
     <textarea id="inputText" placeholder="Enter text..."></textarea>
     <button onclick="encrypt()">Encrypt</button>
     <button onclick="decrypt()">Decrypt</button>
+
     <select id="fontSelect" onchange="changeFont()">
       <option value="Segoe UI">Segoe UI</option>
       <option value="'Pacifico', cursive">Pacifico</option>
@@ -104,18 +23,19 @@
       <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
       <option value="Courier New">Courier New</option>
     </select>
+
     <div id="outputText" class="outputBox">🔄 Output here...</div>
     <button onclick="copyStyledText()">Copy Result</button>
 
-    <!-- Stylish Font Section -->
-    <h2>🎨 Stylish Font Changer</h2>
+    <!-- Stylish Unicode Font Generator -->
+    <h2>🎨 Stylish Font Generator</h2>
     <textarea id="styleInput" placeholder="Type for style..." oninput="updateStyledOutput()"></textarea>
     <select id="styleFontSelect" onchange="updateStyledOutput()">
-      <option value="Segoe UI">Segoe UI</option>
-      <option value="'Pacifico', cursive">Pacifico</option>
-      <option value="'Orbitron', sans-serif">Orbitron</option>
-      <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
-      <option value="Courier New">Courier New</option>
+      <option value="bold">𝗕𝗼𝗹𝗱</option>
+      <option value="italic">𝘪𝘵𝘢𝘭𝘪𝘤</option>
+      <option value="script">𝓈𝒸𝓇𝒾𝓅𝓉</option>
+      <option value="fraktur">𝔣𝔯𝔞𝔨𝔱𝔲𝔯</option>
+      <option value="double">𝔻𝕠𝕦𝕓𝕝𝕖</option>
     </select>
     <div id="styledOutput" class="outputBox">🖋️ Styled output here...</div>
     <button onclick="copyStyledOutput()">Copy Styled Text</button>
@@ -123,71 +43,6 @@
 
   <div class="footer">Created by Ransara Devnath</div>
 
-  <script>
-    window.addEventListener("load", () => {
-      document.body.classList.add("loaded");
-});
-
-    function encrypt() {
-      const input = document.getElementById("inputText").value;
-      const output = btoa(input);
-      showOutput(output);
-}
-
-    function decrypt() {
-      const input = document.getElementById("inputText").value;
-      try {
-     const output = atob(input);
-        showOutput(output);
-} catch {
-        showOutput("❌ Invalid encoded string");
-}
-}
-
-    function showOutput(text) {
-      const out = document.getElementById("outputText");
-      out.innerText = text;
-      changeFont();
-}
-
-    function changeFont() {
-      const font = document.getElementById("fontSelect").value;
-      document.getElementById("outputText").style.fontFamily = font;
-}
-
-    function copyStyledText() {
-      copyFromElement("outputText");
-}
-
-    function updateStyledOutput() {
-      const text = document.getElementById("styleInput").value;
-      const font = document.getElementById("styleFontSelect").value;
-      const output = document.getElementById("styledOutput");
-      output.innerText = text;
-      output.style.fontFamily = font;
-}
-
-    function copyStyledOutput() {
-      copyFromElement("styledOutput");
-}
-
-    function copyFromElement(id) {
-      const output = document.getElementById(id);
-      const range = document.createRange();
-      range.selectNodeContents(output);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-
-      try {
-        document.execCommand("copy");
-        alert("✅ Copied to clipboard!");
-} catch {
-        alert("❌ Copy failed.");
-}
-
-      sel.removeAllRanges();
-}
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
