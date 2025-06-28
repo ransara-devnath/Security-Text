@@ -9,6 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Pacifico&family=Shadows+Into+Light&display=swap" rel="stylesheet">
 
   <style>
+    html {
+      background: #0a001a;
+      color-scheme: dark;
+}
+
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
@@ -19,8 +24,14 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: start;
       animation: glow 3s ease-in-out infinite alternate;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+}
+
+    body.loaded {
+      opacity: 1;
 }
 
     @keyframes glow {
@@ -30,24 +41,18 @@
 
 .container {
       padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
 }
 
     textarea, select {
       padding: 10px;
       margin: 10px 0;
       border: none;
-      border-radius: 5px;
-      width: 90%;
-      max-width: 400px;
+      border-radius: 8px;
+      width: 100%;
       font-size: 16px;
-}
-
-    #outputText {
-      margin-top: 20px;
-      white-space: pre-wrap;
-      font-size: 18px;
-      padding: 15px;
-      word-wrap: break-word;
 }
 
     button {
@@ -58,7 +63,7 @@
       border-radius: 25px;
       cursor: pointer;
       font-size: 16px;
-      margin: 5px;
+      margin: 8px 5px;
       box-shadow: 0 6px 15px rgba(0,0,0,0.3);
       transition: all 0.3s ease;
 }
@@ -68,84 +73,142 @@
       transform: scale(1.05);
 }
 
+    #outputText, #styledOutput {
+      margin: 15px 0;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 5px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+}
+
 .footer {
-      margin-top: 30px;
+      margin: 40px 0 10px;
       font-size: 14px;
       opacity: 0.6;
+}
+
+    h2 {
+      margin-top: 40px;
+      font-size: 22px;
 }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🔐 Security Text</h1>
-    <textarea id="inputText" placeholder="Enter your text..."></textarea><br/>
 
+    <!-- Encrypt / Decrypt -->
+    <textarea id="inputText" placeholder="Enter your text here..."></textarea><br/>
     <button onclick="encrypt()">Encrypt</button>
-    <button onclick="decrypt()">Decrypt</button><br/>
+    <button onclick="decrypt()">Decrypt</button>
 
     <select id="fontSelect" onchange="changeFont()">
       <option value="Segoe UI">Segoe UI</option>
-      <option value="Courier New">Courier New</option>
-      <option value="Comic Sans MS">Comic Sans</option>
-      <option value="Lucida Console">Lucida Console</option>
-      <option value="Impact">Impact</option>
-      <option value="Verdana">Verdana</option>
+      <option value="'Courier New'">Courier New</option>
+      <option value="'Comic Sans MS'">Comic Sans</option>
+      <option value="'Lucida Console'">Lucida Console</option>
+      <option value="'Impact'">Impact</option>
+      <option value="'Verdana'">Verdana</option>
       <option value="'Brush Script MT', cursive">Brush Script</option>
-      <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-      <option value="'Gill Sans', sans-serif">Gill Sans</option>
-      <option value="'Franklin Gothic Medium', sans-serif">Franklin Gothic</option>
       <option value="'Pacifico', cursive">Pacifico</option>
       <option value="'Orbitron', sans-serif">Orbitron</option>
       <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
     </select>
 
-    <div id="outputText"></div>
-    <button onclick="copyStyledText()">Copy</button>
+    <div id="outputText">🔄 Output will appear here</div>
+    <button onclick="copyStyledText()">Copy Result</button>
+
+    <!-- Stylish Font Preview Section -->
+    <h2>🎨 Stylish Font Changer</h2>
+    <textarea id="styleInput" placeholder="Type here for style..." oninput="updateStyledOutput()"></textarea>
+
+    <select id="styleFontSelect" onchange="updateStyledOutput()">
+      <option value="Segoe UI">Segoe UI</option>
+      <option value="'Pacifico', cursive">Pacifico</option>
+      <option value="'Orbitron', sans-serif">Orbitron</option>
+      <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
+    </select>
+
+    <div id="styledOutput">🖋️ Styled text will appear here</div>
+    <button onclick="copyStyledOutput()">Copy Styled Text</button>
   </div>
 
   <div class="footer">Created by Ransara Devnath</div>
 
   <script>
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+});
+
     function encrypt() {
-      let text = document.getElementById("inputText").value;
-      let result = btoa(text);
+      const input = document.getElementById("inputText").value;
+      const result = btoa(input);
       showOutput(result);
 }
 
     function decrypt() {
-      let text = document.getElementById("inputText").value;
+      const input = document.getElementById("inputText").value;
       try {
-        let result = atob(text);
+        const result = atob(input);
         showOutput(result);
 } catch {
-        showOutput("❌ Invalid encoded text");
+        showOutput("❌ Invalid encoded string");
 }
 }
 
     function changeFont() {
-      let font = document.getElementById("fontSelect").value;
+      const font = document.getElementById("fontSelect").value;
       document.getElementById("outputText").style.fontFamily = font;
 }
 
     function showOutput(text) {
-      let output = document.getElementById("outputText");
+      const output = document.getElementById("outputText");
       output.innerText = text;
       changeFont();
 }
 
     function copyStyledText() {
-      let range = document.createRange();
-      let output = document.getElementById("outputText");
+      const output = document.getElementById("outputText");
+      const range = document.createRange();
       range.selectNodeContents(output);
-      let selection = window.getSelection();
+      const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
+
       try {
         document.execCommand("copy");
-        alert("Copied with style! 🎉");
+        alert("📋 Copied with style!");
 } catch {
-        alert("Copy failed.");
+        alert("❌ Copy failed.");
 }
+
+      selection.removeAllRanges();
+}
+
+    function updateStyledOutput() {
+      const input = document.getElementById("styleInput").value;
+      const font = document.getElementById("styleFontSelect").value;
+      const output = document.getElementById("styledOutput");
+      output.innerText = input;
+      output.style.fontFamily = font;
+}
+
+    function copyStyledOutput() {
+      const output = document.getElementById("styledOutput");
+      const range = document.createRange();
+      range.selectNodeContents(output);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      try {
+        document.execCommand("copy");
+        alert("✅ Styled text copied!");
+} catch {
+        alert("❌ Copy failed.");
+}
+
       selection.removeAllRanges();
 }
   </script>
